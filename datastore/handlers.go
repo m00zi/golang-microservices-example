@@ -23,14 +23,14 @@ func compositeHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		getHandler(w, r)
-	case "POST":
-		postHandler(w, r)
+	case "PUT":
+		putHandler(w, r)
 	case "DELETE":
 		deleteHandler(w, r)
 	}
 }
 
-func postHandler(w http.ResponseWriter, r *http.Request) {
+func putHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
@@ -52,7 +52,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set(ContentTypeHeader, TextContentType)
 	w.Header().Set(LocationHeader, getEntityLocation(r, key))
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {

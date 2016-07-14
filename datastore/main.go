@@ -6,7 +6,7 @@ import (
 	"os"
 	"github.com/Sirupsen/logrus"
 	"flag"
-	"pbouda/yoti/discovery"
+	"pbouda/golang-microservices-example/discovery"
 )
 
 var logger *logrus.Logger

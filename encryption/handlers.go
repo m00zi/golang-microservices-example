@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"pbouda/yoti/discovery"
 	"strings"
 	"encoding/base64"
 	"io"
+	"pbouda/golang-microservices-example/discovery"
 )
 
 const (
@@ -48,8 +48,9 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bodyReader := strings.NewReader(base64.URLEncoding.EncodeToString(encrypted))
-	req, err := discovery.NewRequest("POST", datastoreService, "/kv/" + id, bodyReader)
+	base64encoded := base64.URLEncoding.EncodeToString(encrypted)
+	bodyReader := strings.NewReader(base64encoded)
+	req, err := discovery.NewRequest("PUT", datastoreService, "/kv/" + id, bodyReader)
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -68,7 +69,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set(contentTypeHeader, textContentType)
 	w.WriteHeader(http.StatusCreated)
-	w.Write(aesKey)
+	w.Write([]byte(base64.URLEncoding.EncodeToString(aesKey)))
 }
 
 // Process incoming request to retrieve value using the given id
@@ -85,7 +86,13 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error: One encryption key is allowed"))
 		return
 	}
-	key := keys[0]
+
+	key, err := base64.URLEncoding.DecodeString(keys[0])
+	if err != nil {
+		logger.Error("Error during Base64 decoding aes key: '%+v'", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	req, err := discovery.NewRequest("GET", datastoreService, "/kv/" + id, nil)
 	if err != nil {
@@ -110,14 +117,14 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encodedValue, err := base64.URLEncoding.DecodeString(string(body))
+	decodedValue, err := base64.URLEncoding.DecodeString(string(body))
 	if err != nil {
 		logger.Errorf("Decoding the value failed: %+v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	value, err := aesDecrypt([]byte(key), encodedValue)
+	value, err := aesDecrypt(key, decodedValue)
 	if err != nil {
 		logger.Errorf("Decoding the value failed: %+v", err)
 		w.WriteHeader(http.StatusInternalServerError)

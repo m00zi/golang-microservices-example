@@ -2,7 +2,7 @@ package discovery
 
 import (
 	"github.com/satori/go.uuid"
-	"pbouda/etcd_service_discovery"
+	"github.com/petrbouda/etcd_service_discovery"
 	"log"
 	"net/http"
 	"io"
@@ -12,7 +12,7 @@ import (
 
 var (
 	// Client for register a service and getting other services
-	DiscoveryClient *discovery.EtcdRegistryClient
+	DiscoveryClient discovery.RegistryClient
 )
 
 const (
@@ -66,7 +66,7 @@ func NewRequest(method, serviceName, path string, body io.Reader) (*http.Request
 	}
 
 	instances, err := DiscoveryClient.ServicesByName(serviceName)
-	if err == nil || len(instances) <= 0 {
+	if err != nil || len(instances) <= 0 {
 		return nil, fmt.Errorf("Cannot get instances of service: %s.", serviceName)
 	}
 
