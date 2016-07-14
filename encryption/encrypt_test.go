@@ -8,7 +8,7 @@ import (
 	"os"
 	"github.com/gorilla/handlers"
 	"github.com/jarcoal/httpmock"
-	"pbouda/yoti/discovery"
+	"pbouda/golang-microservices-example/discovery"
 )
 
 const (
