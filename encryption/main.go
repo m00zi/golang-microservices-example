@@ -8,6 +8,8 @@ import (
 	"flag"
 	"pbouda/golang-microservices-example/discovery"
 	"github.com/petrbouda/golang-http-client"
+	"log"
+	"fmt"
 )
 
 func init() {
@@ -23,24 +25,29 @@ var (
 
 const (
 	serviceName = "encryption"
+
+	DefaultHost = "127.0.0.1"
+	DefaultPort = "4000"
 )
 
 func main() {
 	debug := flag.Bool("debug", false, "Enable verbose level in HTTP Client.")
 	etcdUrl := flag.String("etcd", discovery.DefaultEtcdUrl, "Etcd Server URL address")
 	enableDiscovery := flag.Bool("discovery", discovery.DefaultEnableDiscovery, "Enable Service Discovery")
-	host := flag.String("host", discovery.DefaultHost, "Datastore Host")
-	port := flag.String("port", discovery.DefaultPort, "Datastore Port")
+	host := flag.String("host", DefaultHost, "Encryption Server Host")
+	port := flag.String("port", DefaultPort, "Encrypton Server Port")
 
 	// Initialize Shared HTTP Client
-	httpClient = http_client.NewHttpClient(debug)
-
-	router := createRouter()
-	http.ListenAndServe(":" + *port, router)
+	httpClient = http_client.NewHttpClient(*debug)
 
 	if *enableDiscovery {
-		discovery.RegisterService(serviceName, *host, *host, *etcdUrl)
+		discovery.RegisterService(serviceName, *host, *port, *etcdUrl)
+		fmt.Printf("Encryption service registered in Service Discovery: %s:%s\n", *host, *port)
 	}
+
+	println("Encryption-Server started!")
+	router := createRouter()
+	log.Fatal(http.ListenAndServe(":" + *port, router))
 }
 
 func createRouter() *mux.Router {

@@ -16,7 +16,7 @@ type EncryptClient struct{
 // Store accepts an id and a payload in bytes and requests that the
 // encryption-server stores them in its data store
 func (c *EncryptClient) Store(id, payload []byte) ([]byte, error) {
-	req, err := discovery.NewRequest("POST", encryptServiceName, "/encrypt/" + id, bytes.NewReader(payload))
+	req, err := discovery.NewRequest("POST", encryptServiceName, "/encrypt/" + string(id), bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -28,10 +28,14 @@ func (c *EncryptClient) Store(id, payload []byte) ([]byte, error) {
 // encryption-server retrieves the original (decrypted) bytes stored
 // with the provided id
 func (c *EncryptClient) Retrieve(id, aesKey []byte) ([]byte, error) {
-	req, err := discovery.NewRequest("GET", encryptServiceName, "/encrypt/" + id, nil)
+	req, err := discovery.NewRequest("GET", encryptServiceName, "/encrypt/" + string(id), nil)
 	if err != nil {
 		return nil, err
 	}
+
+	q := req.URL.Query()
+	q.Add("key", string(aesKey))
+	req.URL.RawQuery = q.Encode()
 
 	return c.invoke(req)
 }

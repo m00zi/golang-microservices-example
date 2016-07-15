@@ -5,6 +5,7 @@ import (
 	"sync"
 	"github.com/gorilla/mux"
 	"io/ioutil"
+	"fmt"
 )
 
 const (
@@ -20,6 +21,7 @@ var dataStore *DataStore = &DataStore{
 }
 
 func compositeHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Errorf("----- jsme u")
 	switch r.Method {
 	case "GET":
 		getHandler(w, r)
@@ -32,7 +34,7 @@ func compositeHandler(w http.ResponseWriter, r *http.Request) {
 
 func putHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	key := vars["id"]
+	key := vars["key"]
 
 	if key == "" {
 		logger.Errorf("Key %s is not provided.", key)

@@ -90,11 +90,12 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 	key, err := base64.URLEncoding.DecodeString(keys[0])
 	if err != nil {
-		logger.Error("Error during Base64 decoding aes key: '%+v'", err)
+		logger.Errorf("Error during Base64 decoding aes key: '%+v'", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	logger.Errorf("Keyyyyyyy: '%s'", id)
 	req, err := discovery.NewRequest("GET", datastoreService, "/kv/" + id, nil)
 	if err != nil {
 		logger.Error(err.Error())

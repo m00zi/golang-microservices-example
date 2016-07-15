@@ -17,8 +17,6 @@ var (
 
 const (
 	DefaultEtcdUrl = "http://127.0.0.1:4001"
-	DefaultHost = "127.0.0.1"
-	DefaultPort = "5000"
 	DefaultEnableDiscovery = true
 )
 
