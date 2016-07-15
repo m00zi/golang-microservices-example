@@ -39,6 +39,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
 
 	aesKey := generateAesKey()
 	encrypted, err := aesEncrypt(aesKey, valueBytes)

@@ -43,7 +43,7 @@ func RegisterService(serviceName, host, port, etcd string) {
 }
 
 // Register only client.
-func RegisterClient(etcd string) {
+func RegisterClient(etcd string) discovery.RegistryClient {
 	// Create application configuration to send it to etcd
 	registryConfig := discovery.EtcdRegistryConfig{EtcdEndpoints: []string{etcd}}
 
@@ -54,6 +54,7 @@ func RegisterClient(etcd string) {
 	}
 
 	DiscoveryClient = client
+	return DiscoveryClient
 }
 
 // Creates a new request with service url which is automatically fetched from service discovery

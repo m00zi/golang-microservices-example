@@ -46,6 +46,7 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
 
  	var pointer interface{} = string(bytes)
 	dataStore.Put(key, &pointer)
