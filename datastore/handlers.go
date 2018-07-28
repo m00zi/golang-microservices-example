@@ -21,7 +21,6 @@ var dataStore *DataStore = &DataStore{
 }
 
 func compositeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Errorf("----- jsme u")
 	switch r.Method {
 	case "GET":
 		getHandler(w, r)
